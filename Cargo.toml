@@ -1,0 +1,9 @@
+[package]
+name = "c2parser"
+version = "0.1.0"
+authors = ["Lukáš Hozda <luk.hozda@gmail.com>"]
+
+[dependencies]
+pest = " 1.0.0-beta.16"
+pest_derive = " 1.0.0-beta.16"
+
