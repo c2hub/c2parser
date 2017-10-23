@@ -1,0 +1,33 @@
+c2 = _{ soi ~ head ~ eoi }
+
+head   = { module ~ import* }
+import = { kw_import ~ ident ~ (kw_as ~ ident)? ~ local? ~ semi}
+module = { kw_module ~ ident ~ semi }
+
+// access modifiers
+public = {kw_public}
+local = {kw_local}
+
+// keywords and extra tokens
+
+lbracket = _{"{"}
+rbracket = _{"}"}
+lparen = _{"("}
+rparen = _{")"}
+lsqr = _{"["}
+rsqr = _{"]"}
+
+semi = _{";"}
+
+kw_public = _{"public"}
+kw_local  = _{"local"}
+
+kw_as = _{"as"}
+kw_import = _{"import"}
+kw_module = _{"module"}
+
+// basic stuff
+ident = { ('a'..'z'|'A'..'Z'|"_") ~ ('a'..'z' | 'A'..'Z' | '0'..'9' | "_" )* }
+newline    = _{ "\n" | "\r\n" }
+whitespace = _{ " " | "\t" | newline }
+comment = _{ ("//" ~ (!newline ~ any)*) | ("/*" ~ (!"*/" ~ any)*) }
