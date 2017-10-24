@@ -1,33 +1,194 @@
-c2 = _{ soi ~ head ~ eoi }
+c2 = _{ soi ~ head ~ body ~ eoi }
 
+// head
 head   = { module ~ import* }
 import = { kw_import ~ ident ~ (kw_as ~ ident)? ~ local? ~ semi}
 module = { kw_module ~ ident ~ semi }
 
+// body
+body = { (decl | func | usertype | arrayincr)* }
+	decl    = { public? ~ (vardecl | cmpdecl) }
+	vardecl = { stype ~ ident ~ (assign_op ~ exp)? ~ semi  }
+	cmpdecl = { "placeholder" } //stype ~ ident ~ assign_op ~ init }
+	//init = { lbracket ~ (()) }
+
+arrayincr = {"placeholder"}
+usertype  = {"placeholder"}
+func      = {"placeholder"}
+
 // access modifiers
 public = {kw_public}
-local = {kw_local}
+local  = {kw_local}
 
 // keywords and extra tokens
-
 lbracket = _{"{"}
 rbracket = _{"}"}
-lparen = _{"("}
-rparen = _{")"}
-lsqr = _{"["}
-rsqr = _{"]"}
+lparen   = _{"("}
+rparen   = _{")"}
+lsqr     = _{"["}
+rsqr     = _{"]"}
 
-semi = _{";"}
+semi   = _{";"}
+quotes = _{"\""}
+
+dot_op         = _{"."}
+comma_op       = _{","}
+assign_op      = _{"="}
+wut_op         = _{"?"}
+colon_op       = _{":"}
+ptr_op         = {"*"}
+arrincr_op     = {"+"}
+cast_op        = {"->"}
+
+increment_op   = {"++"}
+decrement_op   = {"--"}
+
+plus_op  = {"+"}
+minus_op = {"-"}
+multi_op = {"*"}
+div_op   = {"/"}
+mod_op   = {"%"}
+
+lshift_op = {"<<"}
+rshift_op = {">>"}
+
+lt_eq_op = {"<="}
+gt_eq_op = {">="}
+lt_op    = {"<"}
+gt_op    = {">"}
+
+eq_op = {"=="}
+ne_op = {"!="}
+
+b_and = {"&"}
+b_or  = {"|"}
+b_xor = {"^"}
+
+and = {"&&"}
+or  = {"||"}
+
+
+b_com         = {"~"}
+addr_op       = {"&"}
+deref_op      = {"*"}
+un_plus_op    = {"+"}
+un_minus_op   = {"-"}
+b_negation_op = {"!"}
+
+plus_assign_op  = {"+="}
+minus_assign_op = {"-="}
+multi_assign_op = {"*="}
+divid_assign_op = {"/="}
+mod_assign_op   = {"%="}
+lshft_assign_op = {"<<="}
+rshft_assign_op = {">>="}
+b_or_assign_op  = {"|="}
+b_and_assign_op = {"&="}
+b_xor_assign_op = {"^="}
+b_com_assign_op = {"~="}
+
 
 kw_public = _{"public"}
 kw_local  = _{"local"}
 
-kw_as = _{"as"}
+kw_as     = _{"as"}
 kw_import = _{"import"}
 kw_module = _{"module"}
+
+kw_const    = _{"const"}
+kw_volatile = _{"volatile"}
+
+kw_sizeof  = {"sizeof"}
+kw_elemsof = {"elemsof"}
+
+//type
+stype = { (kw_const | kw_volatile)? ~ (natives | symbol) ~ ptr_op* ~ index* }
+natives = {
+	"void" |
+	"char" |
+	"bool" |
+	"i8" |
+	"u8" |
+	"i16"|
+	"u16"|
+	"i32"|
+	"u32"|
+	"i64"|
+	"u64"|
+	"f32"|
+	"f64"
+}
+
+// expressions
+pexp  = { ident | number | stringlit | charlit | (lparen ~ exp ~ rparen) }
+pfexp = { pexp ~
+	( params
+	| (lsqr ~ exp ~ rsqr)
+	| (lsqr ~ integer ~ comma_op ~ integer ~ rsqr)
+	| (dot_op ~ ident)
+	| (increment_op | decrement_op)
+	)*
+}
+uexp  = { pfexp
+	| ((increment_op | decrement_op) ~ uexp)
+	| (uop ~ cast)
+	| ((kw_sizeof | kw_elemsof) ~ (uexp | (lparen ~ stype ~ rparen)))
+}
+cast  = { (lparen ~ cast_op ~ stype ~ rparen)? ~ uexp }
+mexp  = { cast ~ ((multi_op | div_op | mod_op) ~ cast)* }
+aexp  = { mexp ~ ((plus_op | minus_op) ~ mexp)* }
+sexp  = { aexp ~ ((lshift_op | rshift_op) ~ aexp)* }
+rexp  = { sexp ~ ((lt_eq_op | gt_eq_op | lt_op | gt_op) ~ sexp)* }
+eexp  = { rexp ~ ((eq_op | ne_op) ~ rexp)* }
+bexp  = { eexp ~ ((b_or | b_xor | b_and) ~ eexp)* }
+lexp  = { bexp ~ ((and | or) ~ bexp)* }
+elexp = { lexp ~ (wut_op ~ lexp ~ comma_op ~ lexp)* }
+asexp = { elexp ~ (asop ~ asexp)* }
+exp   = { asexp ~ (comma_op ~ asexp)* }
+
+params = { lparen ~ (elexp ~ (comma_op ~ elexp)*)? ~ rparen }
+
+asop = {
+	plus_assign_op  |
+	minus_assign_op |
+	multi_assign_op |
+	divid_assign_op |
+	mod_assign_op   |
+	lshft_assign_op |
+	rshft_assign_op |
+	b_or_assign_op  |
+	b_and_assign_op |
+	b_xor_assign_op |
+	b_com_assign_op |
+	assign_op
+}
+uop = {
+	b_com |
+	addr_op |
+	deref_op |
+	un_plus_op |
+	un_minus_op |
+	b_negation_op
+}
+
+// numbers
+integer = @{ ("+" | "-")? ~ int }
+float   = @{ ("+" | "-")? ~ int ~ ("." ~ digits ~ exp? | exp)? }
+int     = @{ "0" | ('1'..'9' ~ digits?) }
+digits  = @{ (digit | ("_" ~ digit))+ }
+digit   =  { '0'..'9' }
+
+number = { integer | float }
 
 // basic stuff
 ident = { ('a'..'z'|'A'..'Z'|"_") ~ ('a'..'z' | 'A'..'Z' | '0'..'9' | "_" )* }
 newline    = _{ "\n" | "\r\n" }
 whitespace = _{ " " | "\t" | newline }
 comment = _{ ("//" ~ (!newline ~ any)*) | ("/*" ~ (!"*/" ~ any)*) }
+symbol = { (ident ~ dot_op)? ~ ident }
+stringlit  = @{ "\"" ~ (escape | !("\"" | "\\") ~ any)* ~ "\"" }
+charlit =  @{"\'" ~ (escape | any) ~ "\'" }
+escape = @{ "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
+unicode = @{ "u" ~ hex ~ hex ~ hex ~ hex | "U" ~ hex ~ hex ~ hex ~ hex ~ hex ~ hex ~ hex ~ hex }
+hex = { '0'..'9' | 'A'..'F' }
+index = { lsqr ~ ( arrincr_op | exp )? ~ rsqr }
