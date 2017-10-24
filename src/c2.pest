@@ -85,8 +85,6 @@ rshft_assign_op = {">>="}
 b_or_assign_op  = {"|="}
 b_and_assign_op = {"&="}
 b_xor_assign_op = {"^="}
-b_com_assign_op = {"~="}
-
 
 kw_public = _{"public"}
 kw_local  = _{"local"}
@@ -159,7 +157,6 @@ asop = {
 	b_or_assign_op  |
 	b_and_assign_op |
 	b_xor_assign_op |
-	b_com_assign_op |
 	assign_op
 }
 uop = {

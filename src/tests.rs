@@ -181,4 +181,159 @@ fn parse_cast()
 	C2Parser::parse_str(Rule::cast, "(->potato)lol").unwrap();
 }
 
+#[test]
+fn parse_mexp()
+{
+	// multiply
+	C2Parser::parse_str(Rule::mexp, "5 * 5").unwrap();
 
+	// divide
+	C2Parser::parse_str(Rule::mexp, "4 / 4").unwrap();
+
+	// modulo
+	C2Parser::parse_str(Rule::mexp, "5 % 3").unwrap();
+}
+
+#[test]
+fn parse_aexp()
+{
+	// add
+	C2Parser::parse_str(Rule::aexp, "5 + 6").unwrap();
+
+	// subtract
+	C2Parser::parse_str(Rule::aexp, "6 - 5").unwrap();
+}
+
+
+#[test]
+fn parse_sexp()
+{
+	// left shift
+	C2Parser::parse_str(Rule::sexp, "5 << 1").unwrap();
+
+	// right shft
+	C2Parser::parse_str(Rule::sexp, "5 >> 1").unwrap();
+}
+
+
+#[test]
+fn parse_rexp()
+{
+	// lt_eq_op
+	C2Parser::parse_str(Rule::rexp, "5 <= 6").unwrap();
+
+	// gt_eq_op
+	C2Parser::parse_str(Rule::rexp, "5 >= 6").unwrap();
+
+	// lt_op
+	C2Parser::parse_str(Rule::rexp, "5 < 6").unwrap();
+
+	// gt_op
+	C2Parser::parse_str(Rule::rexp, "5 > 6").unwrap();
+}
+
+#[test]
+fn parse_eexp()
+{
+	// eq_op
+	C2Parser::parse_str(Rule::eexp, "potato == potato").unwrap();
+
+	// ne_op
+	C2Parser::parse_str(Rule::eexp, "potato != potato").unwrap();
+}
+
+#[test]
+fn parse_bexp()
+{
+	// b_or
+	C2Parser::parse_str(Rule::bexp, "potato | potato").unwrap();
+
+	// b_xor
+	C2Parser::parse_str(Rule::bexp, "potato ^ potato").unwrap();
+
+	// b_and
+	C2Parser::parse_str(Rule::bexp, "potato & potato").unwrap();
+}
+
+#[test]
+fn parse_lexp()
+{
+	// and
+	C2Parser::parse_str(Rule::lexp, "potato && potato").unwrap();
+
+	// or
+	C2Parser::parse_str(Rule::lexp, "potato || potato").unwrap();
+}
+
+#[test]
+fn parse_elexp()
+{
+	C2Parser::parse_str(Rule::elexp, "potato ? potato : potato").unwrap();
+}
+
+#[test]
+fn parse_asexp()
+{
+	// plus_assign_op
+	C2Parser::parse_str(Rule::asexp, "potato += 5").unwrap();
+
+	// minus_assign_op
+	C2Parser::parse_str(Rule::asexp, "potato -= 5").unwrap();
+
+	// multi_assign_op
+	C2Parser::parse_str(Rule::asexp, "potato *= 5").unwrap();
+
+	// divid_assign_op
+	C2Parser::parse_str(Rule::asexp, "potato /= 5").unwrap();
+
+	// mod_assign_op
+	C2Parser::parse_str(Rule::asexp, "potato %= 5").unwrap();
+
+	// lshft_assign_op
+	C2Parser::parse_str(Rule::asexp, "potato <<= 5").unwrap();
+
+	// rshft_assign_op
+	C2Parser::parse_str(Rule::asexp, "potato >>= 5").unwrap();
+
+	// b_or_assign_op
+	C2Parser::parse_str(Rule::asexp, "potato |= 5").unwrap();
+
+	// b_and_assign_op
+	C2Parser::parse_str(Rule::asexp, "potato &= 5").unwrap();
+
+	// b_xor_assign_op
+	C2Parser::parse_str(Rule::asexp, "potato ^= 5").unwrap();
+
+	// assign_op
+	C2Parser::parse_str(Rule::asexp, "potato = potato").unwrap();
+}
+
+#[test]
+fn parse_exp() // comma operator
+{
+	C2Parser::parse_str(Rule::asexp, "potato, potato, potato").unwrap();
+}
+
+#[test]
+fn parse_params()
+{
+	// one
+	C2Parser::parse_str(Rule::exp, "(potato)").unwrap();
+
+	// many
+	C2Parser::parse_str(Rule::exp, "(potato, potato, potato)").unwrap();
+}
+
+#[test]
+fn parse_complex()
+{
+	C2Parser::parse_str(Rule::exp,"
+			(
+				1 + 2, 
+				3 * 4,
+				a = b,
+				c == d,
+				(5 < 4 && 4 > 5) && (4 <= 5 || 5 >= 4 )
+			)
+		").unwrap();
+}
