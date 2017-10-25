@@ -337,3 +337,60 @@ fn parse_complex()
 			)
 		").unwrap();
 }
+
+
+#[test]
+fn parse_var_simple()
+{
+	C2Parser::parse_str(Rule::vardecl, "i8 potato = 5;").unwrap();
+
+	C2Parser::parse_str(Rule::vardecl, "i8 potato = 5 * 2;").unwrap();
+
+	C2Parser::parse_str(Rule::vardecl, "i8 potato;").unwrap();
+}
+
+#[test]
+fn parse_var_cmpd()
+{
+	// arr
+	C2Parser::parse_str(Rule::cmpdecl, "i8 potato = { 4, 6, 7, 8 }").unwrap();
+
+	// struct-like
+	C2Parser::parse_str(Rule::cmpdecl, "i8 potato = { .tangerine = 6, .mandarinka = 7 }").unwrap();
+}
+
+#[test]
+fn parse_decl()
+{
+	// public
+	C2Parser::parse_str(Rule::decl, "public i8 potato = 4;").unwrap();
+
+	// local
+	C2Parser::parse_str(Rule::decl, "i8 potato = 4;").unwrap();
+}
+
+#[test]
+fn show_ast()
+{
+	use util::display_ast;
+
+	let pairs = C2Parser::parse_str(Rule::c2,
+		"
+		module c2_test;
+
+		import stdio;
+		import stdlib local;
+		import assert as ass;
+		import sergei as potato local;
+
+		i8 potato = lol;
+		potato potato = potato;
+		public i16 lol = 5 * 6 + 3;
+		"
+	).unwrap();
+
+	for node in pairs
+	{
+		display_ast(&node, 1);
+	}
+}
