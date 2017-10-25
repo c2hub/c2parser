@@ -7,14 +7,37 @@ module = { kw_module ~ ident ~ semi }
 
 // body
 body = { (decl | func | usertype | arrayincr)* }
-	decl    = { public? ~ (vardecl | cmpdecl) }
-	vardecl = { stype ~ ident ~ (assign_op ~ exp)? ~ semi  }
-	cmpdecl = { "placeholder" } //stype ~ ident ~ assign_op ~ init }
-	//init = { lbracket ~ (()) }
 
-arrayincr = {"placeholder"}
+decl = { public? ~ (vardecl | cmpdecl) }
+	vardecl = { stype ~ ident ~ (assign_op ~ exp)? ~ semi  }
+	cmpdecl = { stype ~ ident ~ assign_op ~ init }
+	init    = {
+		lbracket
+		~ (
+			(
+				(dot_op ~ ident | lsqr ~ constant ~ rsqr)
+					~ assign_op
+				)?
+			~ (init | elexp)
+			~ (
+				comma_op
+				~ (
+					(dot_op ~ ident | lsqr ~ constant ~ rsqr)
+						~ assign_op
+					)?
+				~ (init | elexp))*
+			)?
+		~ comma_op?
+		~ rbracket
+	}
+
+
 usertype  = {"placeholder"}
 func      = {"placeholder"}
+
+// array_incr stuff
+array_inc_op = _{ plus_assign_op }
+arrayincr = { symbol ~ array_inc_op ~ (exp ~ semi | init) }
 
 // access modifiers
 public = {kw_public}
@@ -99,6 +122,8 @@ kw_volatile = _{"volatile"}
 kw_sizeof  = {"sizeof"}
 kw_elemsof = {"elemsof"}
 
+kw_nil = {"nil"}
+
 //type
 stype = { (kw_const | kw_volatile)? ~ (natives | symbol) ~ ptr_op* ~ index* }
 natives = {
@@ -178,7 +203,7 @@ digit   =  { '0'..'9' }
 number = { integer | float }
 
 // basic stuff
-ident = { ('a'..'z'|'A'..'Z'|"_") ~ ('a'..'z' | 'A'..'Z' | '0'..'9' | "_" )* }
+ident = @{ ('a'..'z'|'A'..'Z'|"_") ~ ('a'..'z' | 'A'..'Z' | '0'..'9' | "_" )* }
 newline    = _{ "\n" | "\r\n" }
 whitespace = _{ " " | "\t" | newline }
 comment = _{ ("//" ~ (!newline ~ any)*) | ("/*" ~ (!"*/" ~ any)*) }
@@ -189,3 +214,4 @@ escape = @{ "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
 unicode = @{ "u" ~ hex ~ hex ~ hex ~ hex | "U" ~ hex ~ hex ~ hex ~ hex ~ hex ~ hex ~ hex ~ hex }
 hex = { '0'..'9' | 'A'..'F' }
 index = { lsqr ~ ( arrincr_op | exp )? ~ rsqr }
+constant = { kw_nil | number | charlit | stringlit | ident }
