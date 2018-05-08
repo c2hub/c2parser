@@ -5,16 +5,14 @@ use ast_builder::{
 	BuildResult
 };
 
-pub trait Expression
-{
+pub trait Expression {
 	fn get_any(&self) -> Box<Any>;
 	fn eat_any(self) -> Box<Any>;
 	fn get_type(&self) -> ExpressionType;
 }
 
 #[derive(Debug, Clone, Default, Eq, PartialEq)]
-pub enum ExpressionType
-{
+pub enum ExpressionType {
 	// compatibility layer, lol
 	Identifier,
 	Number,
@@ -27,7 +25,7 @@ pub enum ExpressionType
 	FunctionCall,
 	Cast,
 	UnaryExpression,
-	MultiplicativeExpression, // also modulo and divide ofc
+	MultiplicativeExpression, // also modulo and divide
 	AdditionExpression, // also subtraction
 	ShiftExpression,
 	RelationExpression,
@@ -42,8 +40,7 @@ pub enum ExpressionType
 
 // primary expression
 #[derive(Debug, Clone, Default, Eq, PartialEq)]
-pub enum PrimaryExpression
-{
+pub enum PrimaryExpression {
 	pub name: String,
 	pub alias: Option<String>,
 	local: bool,

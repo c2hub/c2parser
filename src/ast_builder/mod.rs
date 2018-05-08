@@ -27,20 +27,16 @@ pub use self::head::{
 
 // BuilderError
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum BuilderError
-{
+pub enum BuilderError {
 	UnexpectedRule(Rule, Rule),
 	ExpectedPair,
 	InvalidPair,
 	UnexpectedPair,
 }
 
-impl Error for BuilderError
-{
-	fn description(&self) -> &str
-	{
-		match *self
-		{
+impl Error for BuilderError {
+	fn description(&self) -> &str {
+		match *self {
 			BuilderError::UnexpectedRule(..) => "pair is a different rule than expected",
 			BuilderError::ExpectedPair => "pair was expected but none received",
 			BuilderError::InvalidPair => "pair contains invalid data",
@@ -49,18 +45,14 @@ impl Error for BuilderError
 	}
 }
 
-impl fmt::Display for BuilderError
-{
-	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result
-	{
-		match *self
-		{
-			BuilderError::UnexpectedRule(got, expected) =>
-			{
+impl fmt::Display for BuilderError {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		match *self {
+			BuilderError::UnexpectedRule(got, expected) => {
 				write!(f, "Pair has a different rule than expected. Got: {:?}, Expected: {:?}", got, expected)
 			},
-			BuilderError::ExpectedPair|
-			BuilderError::UnexpectedPair|
+			BuilderError::ExpectedPair |
+			BuilderError::UnexpectedPair |
 			BuilderError::InvalidPair => write!(f, "{}", self.description()),
 		}
 	}

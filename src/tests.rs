@@ -3,8 +3,7 @@ use pest::Parser;
 
 // parsing tests?
 #[test]
-fn parse_module()
-{
+fn parse_module() {
 	C2Parser::parse_str(Rule::c2,
 		"
 		module c2_test;
@@ -19,8 +18,7 @@ fn parse_module()
 
 // builder tests
 #[test]
-fn module_decl()
-{
+fn module_decl() {
 	use ast_builder::{parse_module_decl, ModuleDecl};
 
 	assert_eq!(
@@ -35,8 +33,7 @@ fn module_decl()
 }
 
 #[test]
-fn import()
-{
+fn import() {
 	use ast_builder::parse_import;
 
 	parse_import(
@@ -69,8 +66,7 @@ fn import()
 }
 
 #[test]
-fn head()
-{
+fn head() {
 	use ast_builder::parse_head;
 
 	parse_head(
@@ -89,8 +85,7 @@ fn head()
 
 
 #[test]
-fn parse_pexp()
-{
+fn parse_pexp() {
 	// ident
 	C2Parser::parse_str(Rule::pexp, "potato").unwrap();
 
@@ -111,8 +106,7 @@ fn parse_pexp()
 }
 
 #[test]
-fn parse_pfexp()
-{
+fn parse_pfexp() {
 	// pfexp - params
 	C2Parser::parse_str(Rule::pfexp, "potato()").unwrap();
 
@@ -133,8 +127,7 @@ fn parse_pfexp()
 }
 
 #[test]
-fn parse_uexp()
-{
+fn parse_uexp() {
 	// uexp - prefix
 	C2Parser::parse_str(Rule::uexp, "++potato").unwrap();
 
@@ -169,8 +162,7 @@ fn parse_uexp()
 }
 
 #[test]
-fn parse_cast()
-{
+fn parse_cast() {
 	// test propagation
 	C2Parser::parse_str(Rule::cast, "potato").unwrap();
 
@@ -182,8 +174,7 @@ fn parse_cast()
 }
 
 #[test]
-fn parse_mexp()
-{
+fn parse_mexp() {
 	// multiply
 	C2Parser::parse_str(Rule::mexp, "5 * 5").unwrap();
 
@@ -195,8 +186,7 @@ fn parse_mexp()
 }
 
 #[test]
-fn parse_aexp()
-{
+fn parse_aexp() {
 	// add
 	C2Parser::parse_str(Rule::aexp, "5 + 6").unwrap();
 
@@ -206,8 +196,7 @@ fn parse_aexp()
 
 
 #[test]
-fn parse_sexp()
-{
+fn parse_sexp() {
 	// left shift
 	C2Parser::parse_str(Rule::sexp, "5 << 1").unwrap();
 
@@ -217,8 +206,7 @@ fn parse_sexp()
 
 
 #[test]
-fn parse_rexp()
-{
+fn parse_rexp() {
 	// lt_eq_op
 	C2Parser::parse_str(Rule::rexp, "5 <= 6").unwrap();
 
@@ -233,8 +221,7 @@ fn parse_rexp()
 }
 
 #[test]
-fn parse_eexp()
-{
+fn parse_eexp() {
 	// eq_op
 	C2Parser::parse_str(Rule::eexp, "potato == potato").unwrap();
 
@@ -243,8 +230,7 @@ fn parse_eexp()
 }
 
 #[test]
-fn parse_bexp()
-{
+fn parse_bexp() {
 	// b_or
 	C2Parser::parse_str(Rule::bexp, "potato | potato").unwrap();
 
@@ -256,8 +242,7 @@ fn parse_bexp()
 }
 
 #[test]
-fn parse_lexp()
-{
+fn parse_lexp() {
 	// and
 	C2Parser::parse_str(Rule::lexp, "potato && potato").unwrap();
 
@@ -266,14 +251,12 @@ fn parse_lexp()
 }
 
 #[test]
-fn parse_elexp()
-{
+fn parse_elexp() {
 	C2Parser::parse_str(Rule::elexp, "potato ? potato : potato").unwrap();
 }
 
 #[test]
-fn parse_asexp()
-{
+fn parse_asexp() {
 	// plus_assign_op
 	C2Parser::parse_str(Rule::asexp, "potato += 5").unwrap();
 
@@ -309,14 +292,13 @@ fn parse_asexp()
 }
 
 #[test]
-fn parse_exp() // comma operator
-{
+// comma operator
+fn parse_exp() {
 	C2Parser::parse_str(Rule::asexp, "potato, potato, potato").unwrap();
 }
 
 #[test]
-fn parse_params()
-{
+fn parse_params() {
 	// one
 	C2Parser::parse_str(Rule::exp, "(potato)").unwrap();
 
@@ -325,11 +307,10 @@ fn parse_params()
 }
 
 #[test]
-fn parse_complex()
-{
+fn parse_complex() {
 	C2Parser::parse_str(Rule::exp,"
 			(
-				1 + 2, 
+				1 + 2,
 				3 * 4,
 				a = b,
 				c == d,
@@ -340,8 +321,7 @@ fn parse_complex()
 
 
 #[test]
-fn parse_var_simple()
-{
+fn parse_var_simple() {
 	C2Parser::parse_str(Rule::vardecl, "i8 potato = 5;").unwrap();
 
 	C2Parser::parse_str(Rule::vardecl, "i8 potato = 5 * 2;").unwrap();
@@ -350,8 +330,7 @@ fn parse_var_simple()
 }
 
 #[test]
-fn parse_var_cmpd()
-{
+fn parse_var_cmpd() {
 	// arr
 	C2Parser::parse_str(Rule::cmpdecl, "i8 potato = { 4, 6, 7, 8 }").unwrap();
 
@@ -360,8 +339,7 @@ fn parse_var_cmpd()
 }
 
 #[test]
-fn parse_decl()
-{
+fn parse_decl() {
 	// public
 	C2Parser::parse_str(Rule::decl, "public i8 potato = 4;").unwrap();
 
@@ -370,8 +348,7 @@ fn parse_decl()
 }
 
 #[test]
-fn show_ast()
-{
+fn show_ast() {
 	use util::display_ast;
 
 	let pairs = C2Parser::parse_str(Rule::c2,
@@ -389,8 +366,7 @@ fn show_ast()
 		"
 	).unwrap();
 
-	for node in pairs
-	{
+	for node in pairs {
 		display_ast(&node, 1);
 	}
 }
